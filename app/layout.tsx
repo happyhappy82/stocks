@@ -8,25 +8,25 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "주식리뷰Lab",
-  description: "국내외 주식 종목 분석 및 투자 정보 및 투자 가이드를 제공하는 사이트입니다.",
+  title: "주식팁가이드",
+  description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   metadataBase: new URL("https://stockreviewlab.xyz"),
-  keywords: ["주식 분석", "아파트 리뷰", "오피스텔 추천", "부동산 투자", "매물 정보"],
-  authors: [{ name: "StockReviewLab" }],
-  creator: "StockReviewLab",
-  publisher: "StockReviewLab",
+  keywords: ["주식 분석", "미국주식", "한국주식", "종목 정보", "투자 가이드"],
+  authors: [{ name: "주식팁가이드" }],
+  creator: "주식팁가이드",
+  publisher: "주식팁가이드",
   openGraph: {
-    title: "주식리뷰Lab",
-    description: "국내외 주식 종목 분석 및 투자 정보 및 투자 가이드를 제공하는 사이트입니다.",
+    title: "주식팁가이드",
+    description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
     type: "website",
     locale: "ko_KR",
     url: "https://stockreviewlab.xyz",
-    siteName: "주식리뷰Lab",
+    siteName: "주식팁가이드",
   },
   twitter: {
     card: "summary_large_image",
-    title: "주식리뷰Lab",
-    description: "국내외 주식 종목 분석 및 투자 정보 및 투자 가이드를 제공하는 사이트입니다.",
+    title: "주식팁가이드",
+    description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   },
   robots: {
     index: true,
@@ -49,10 +49,10 @@ export default function RootLayout({
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "주식리뷰Lab",
-    "alternateName": "StockReviewLab",
+    "name": "주식팁가이드",
+    "alternateName": "StockTipGuide",
     "url": "https://stockreviewlab.xyz",
-    "description": "국내외 주식 종목 분석 및 투자 정보 및 투자 가이드를 제공하는 사이트입니다.",
+    "description": "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   };
 
   return (
