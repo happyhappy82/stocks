@@ -54,7 +54,9 @@ export function getSortedPropertiesData(): Stock[] {
 }
 
 export function getStockBySlug(slug: string): Stock | null {
-  const fullPath = path.join(stocksDirectory, `${slug}.md`);
+  // URL 인코딩된 한글 slug 디코딩
+  const decodedSlug = decodeURIComponent(slug);
+  const fullPath = path.join(stocksDirectory, `${decodedSlug}.md`);
 
   if (!fs.existsSync(fullPath)) {
     return null;
@@ -64,7 +66,7 @@ export function getStockBySlug(slug: string): Stock | null {
   const { data, content } = matter(fileContents);
 
   return {
-    slug,
+    slug: decodedSlug,
     title: data.title || '',
     date: data.date || '',
     excerpt: data.excerpt || '',
