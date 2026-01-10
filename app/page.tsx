@@ -6,7 +6,7 @@ export default function Home() {
   const stocks = getSortedPropertiesData();
 
   return (
-    <>
+    <div className="max-w-2xl mx-auto">
       <Header />
       <main>
         <div className="relative -top-[10px] flex flex-col gap-8">
@@ -19,6 +19,6 @@ export default function Home() {
           )}
         </div>
       </main>
-    </>
+    </div>
   );
 }
