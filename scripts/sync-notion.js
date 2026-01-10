@@ -23,8 +23,8 @@ if (!fs.existsSync(IMAGES_DIR)) {
 function generateSlug(title) {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9가-힣\\s-]/g, '')
-    .replace(/\\s+/g, '-')
+    .replace(/[^a-z0-9가-힣\s-]/g, '')
+    .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim();
 }
@@ -132,10 +132,10 @@ async function processPage(pageId, isNew = false) {
   const mdblocks = await n2m.pageToMarkdown(pageId);
   let markdown = n2m.toMarkdownString(mdblocks).parent;
 
-  const imageMatches = markdown.match(/!\\[.*?\\]\\((https?:\\/\\/.*?)\\)/g);
+  const imageMatches = markdown.match(/!\[.*?\]\((https?:\/\/.*?)\)/g);
   if (imageMatches) {
     for (const match of imageMatches) {
-      const urlMatch = match.match(/\\((https?:\\/\\/.*?)\\)/);
+      const urlMatch = match.match(/\((https?:\/\/.*?)\)/);
       if (urlMatch) {
         const imageUrl = urlMatch[1];
         const imageFilename = `${slug}-${Date.now()}-${path.basename(new URL(imageUrl).pathname)}`;
