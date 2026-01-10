@@ -132,6 +132,16 @@ async function processPage(pageId, isNew = false) {
   const mdblocks = await n2m.pageToMarkdown(pageId);
   let markdown = n2m.toMarkdownString(mdblocks).parent;
 
+  // 본문에서 excerpt 자동 생성 (마크다운 문법 제거 후 첫 150자)
+  const plainText = markdown
+    .replace(/^#+\s+/gm, '')  // 헤딩 제거
+    .replace(/!\[.*?\]\(.*?\)/g, '')  // 이미지 제거
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')  // 링크 텍스트만 유지
+    .replace(/[*_~`]/g, '')  // 마크다운 문법 제거
+    .replace(/\n+/g, ' ')  // 줄바꿈을 공백으로
+    .trim();
+  const autoExcerpt = plainText.slice(0, 150) + (plainText.length > 150 ? '...' : '');
+
   const imageMatches = markdown.match(/!\[.*?\]\((https?:\/\/.*?)\)/g);
   if (imageMatches) {
     for (const match of imageMatches) {
@@ -152,10 +162,13 @@ async function processPage(pageId, isNew = false) {
     }
   }
 
+  // excerpt가 없으면 autoExcerpt 사용
+  const finalExcerpt = props.excerpt || autoExcerpt;
+
   const frontmatter = `---
 title: "${props.title}"
 date: "${props.date}"
-excerpt: "${props.excerpt}"
+excerpt: "${finalExcerpt}"
 lightColor: "${props.lightColor}"
 darkColor: "${props.darkColor}"
 notionPageId: "${props.pageId}"
