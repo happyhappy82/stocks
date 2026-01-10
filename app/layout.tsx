@@ -63,7 +63,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
-      <body className="mx-auto max-w-2xl bg-white px-5 py-12 text-black">
+      <body className="mx-auto max-w-6xl bg-white px-5 py-12 text-black">
         {children}
       </body>
     </html>

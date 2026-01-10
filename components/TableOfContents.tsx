@@ -32,17 +32,17 @@ export default function TableOfContents() {
   if (toc.length === 0) return null;
 
   return (
-    <nav className="mt-12 p-6 bg-gray-50 rounded-lg">
-      <h2 className="text-xl font-bold mb-4">목차</h2>
-      <ul className="space-y-2">
+    <nav className="sticky top-8 p-5 bg-gray-50 rounded-lg">
+      <h2 className="text-lg font-bold mb-4">목차</h2>
+      <ul className="space-y-2 text-sm">
         {toc.map((item) => (
           <li
             key={item.id}
-            style={{ marginLeft: `${(item.level - 2) * 1}rem` }}
+            style={{ marginLeft: `${(item.level - 2) * 0.75}rem` }}
           >
             <Link
               href={`#${item.id}`}
-              className="text-blue-600 hover:underline"
+              className="text-gray-600 hover:text-blue-600 hover:underline"
             >
               {item.text}
             </Link>
