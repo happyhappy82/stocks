@@ -15,7 +15,7 @@ function generateSitemap() {
 
   urls.push({
     loc: SITE_URL,
-    lastmod: new Date().toISOString().split('T')[0],
+    lastmod: new Date().toISOString(),
     changefreq: 'daily',
     priority: '1.0',
   });
@@ -31,7 +31,7 @@ function generateSitemap() {
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data } = matter(fileContents);
 
-        const date = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const date = data.date ? new Date(data.date).toISOString() : new Date().toISOString();
 
         urls.push({
           loc: `${SITE_URL}/${encodeURIComponent(slug)}`,

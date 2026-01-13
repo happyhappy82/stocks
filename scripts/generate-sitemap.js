@@ -8,7 +8,7 @@ const publicDirectory = path.join(process.cwd(), 'public');
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toISOString().split('T')[0];
+  return date.toISOString();
 }
 
 function generateSitemap() {
@@ -19,7 +19,7 @@ function generateSitemap() {
   // 메인 페이지
   urls.push({
     loc: SITE_URL,
-    lastmod: new Date().toISOString().split('T')[0],
+    lastmod: new Date().toISOString(),
     changefreq: 'daily',
     priority: '1.0',
   });
@@ -38,7 +38,7 @@ function generateSitemap() {
 
         urls.push({
           loc: `${SITE_URL}/${encodeURIComponent(slug)}`,
-          lastmod: data.date ? formatDate(data.date) : new Date().toISOString().split('T')[0],
+          lastmod: data.date ? formatDate(data.date) : new Date().toISOString(),
           changefreq: 'weekly',
           priority: '0.8',
         });
