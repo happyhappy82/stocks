@@ -41,6 +41,11 @@ jobs:
           TRIGGER_TYPE: ${{ github.event_name }}
         run: node scripts/sync-notion.js
 
+      - name: Generate sitemap.xml
+        run: |
+          echo "🗺️ Generating sitemap.xml..."
+          node scripts/generate-sitemap.js
+
       - name: Check for changes
         id: check_changes
         run: |
@@ -63,6 +68,7 @@ jobs:
         run: |
           git add -A content/stocks/
           git add -A public/notion-images/
+          git add public/sitemap.xml
 
           git commit -m "Sync stocks from Notion"
 
