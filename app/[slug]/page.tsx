@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const url = `https://stockreviewlab.xyz/${slug}`;
+  const url = `https://www.stocktipguide.xyz/${slug}`;
 
   return {
     title: property.title,
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: ["주식팁가이드"],
       images: [
         {
-          url: "https://stockreviewlab.xyz/og-image.png",
+          url: "https://www.stocktipguide.xyz/og-image.png",
           width: 1200,
           height: 630,
           alt: property.title,
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: property.title,
       description: property.excerpt,
-      images: ["https://stockreviewlab.xyz/og-image.png"],
+      images: ["https://www.stocktipguide.xyz/og-image.png"],
     },
   };
 }
@@ -84,25 +84,25 @@ export default async function StockPage({ params }: Props) {
   const qnaItems = extractQnA(property.content);
   const contentWithoutQnA = removeQnASection(property.content);
 
-  const articleUrl = `https://stockreviewlab.xyz/${slug}`;
+  const articleUrl = `https://www.stocktipguide.xyz/${slug}`;
 
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: property.title,
     description: property.excerpt,
-    image: "https://stockreviewlab.xyz/og-image.png",
+    image: "https://www.stocktipguide.xyz/og-image.png",
     author: {
       "@type": "Organization",
       name: "주식팁가이드",
-      url: "https://stockreviewlab.xyz",
+      url: "https://www.stocktipguide.xyz",
     },
     publisher: {
       "@type": "Organization",
       name: "주식팁가이드",
       logo: {
         "@type": "ImageObject",
-        url: "https://stockreviewlab.xyz/logo.png",
+        url: "https://www.stocktipguide.xyz/logo.png",
         width: 180,
         height: 40,
       },
@@ -123,7 +123,7 @@ export default async function StockPage({ params }: Props) {
         "@type": "ListItem",
         position: 1,
         name: "홈",
-        item: "https://stockreviewlab.xyz",
+        item: "https://www.stocktipguide.xyz",
       },
       {
         "@type": "ListItem",

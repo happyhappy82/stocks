@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 
-const SITE_URL = process.env.SITE_URL || 'https://stockreviewlab.xyz';
+const SITE_URL = process.env.SITE_URL || 'https://www.stocktipguide.xyz';
 
 // sitemap.xml 생성
 function generateSitemap() {

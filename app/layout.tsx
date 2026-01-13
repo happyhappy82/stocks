@@ -14,9 +14,9 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "주식팁가이드",
   description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
-  metadataBase: new URL("https://stockreviewlab.xyz"),
+  metadataBase: new URL("https://www.stocktipguide.xyz"),
   alternates: {
-    canonical: "https://stockreviewlab.xyz",
+    canonical: "https://www.stocktipguide.xyz",
   },
   keywords: ["주식 분석", "미국주식", "한국주식", "종목 정보", "투자 가이드"],
   authors: [{ name: "주식팁가이드" }],
@@ -27,11 +27,11 @@ export const metadata: Metadata = {
     description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
     type: "website",
     locale: "ko_KR",
-    url: "https://stockreviewlab.xyz",
+    url: "https://www.stocktipguide.xyz",
     siteName: "주식팁가이드",
     images: [
       {
-        url: "https://stockreviewlab.xyz/og-image.png",
+        url: "https://www.stocktipguide.xyz/og-image.png",
         width: 1200,
         height: 630,
         alt: "주식팁가이드 - 미국주식, 한국주식 투자 가이드",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "주식팁가이드",
     description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
-    images: ["https://stockreviewlab.xyz/og-image.png"],
+    images: ["https://www.stocktipguide.xyz/og-image.png"],
   },
   robots: {
     index: true,
@@ -70,7 +70,7 @@ export default function RootLayout({
     "@type": "WebSite",
     "name": "주식팁가이드",
     "alternateName": "StockTipGuide",
-    "url": "https://stockreviewlab.xyz",
+    "url": "https://www.stocktipguide.xyz",
     "description": "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   };
 
@@ -78,10 +78,10 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "주식팁가이드",
-    "url": "https://stockreviewlab.xyz",
+    "url": "https://www.stocktipguide.xyz",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://stockreviewlab.xyz/logo.png",
+      "url": "https://www.stocktipguide.xyz/logo.png",
       "width": 180,
       "height": 40,
     },
