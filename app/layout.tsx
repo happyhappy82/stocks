@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   title: "주식팁가이드",
   description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   metadataBase: new URL("https://stockreviewlab.xyz"),
+  alternates: {
+    canonical: "https://stockreviewlab.xyz",
+  },
   keywords: ["주식 분석", "미국주식", "한국주식", "종목 정보", "투자 가이드"],
   authors: [{ name: "주식팁가이드" }],
   creator: "주식팁가이드",
@@ -26,11 +29,20 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "https://stockreviewlab.xyz",
     siteName: "주식팁가이드",
+    images: [
+      {
+        url: "https://stockreviewlab.xyz/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "주식팁가이드 - 미국주식, 한국주식 투자 가이드",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "주식팁가이드",
     description: "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
+    images: ["https://stockreviewlab.xyz/og-image.png"],
   },
   robots: {
     index: true,
@@ -59,6 +71,20 @@ export default function RootLayout({
     "name": "주식팁가이드",
     "alternateName": "StockTipGuide",
     "url": "https://stockreviewlab.xyz",
+    "description": "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "주식팁가이드",
+    "url": "https://stockreviewlab.xyz",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://stockreviewlab.xyz/logo.png",
+      "width": 180,
+      "height": 40,
+    },
     "description": "미국,한국주식 시장의 흐름을 전달드립니다. 기업별 종목 정보들을 편리하게 가이드해드립니다.",
   };
 
@@ -97,6 +123,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
       <body className="mx-auto max-w-6xl bg-white px-5 py-12 text-black">
