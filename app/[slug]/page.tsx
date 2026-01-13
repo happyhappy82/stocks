@@ -6,15 +6,8 @@ import TableOfContents from "@/components/TableOfContents";
 import QnA from "@/components/QnA";
 import { getStockBySlug, getSortedPropertiesData } from "@/lib/stocks";
 import { extractQnA, removeQnASection } from "@/lib/qna-utils";
+import { formatDate } from "@/lib/date-utils";
 import type { Metadata } from "next";
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
 
 interface Props {
   params: Promise<{ slug: string }>;
