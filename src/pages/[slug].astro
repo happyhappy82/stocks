@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import QnA from '../components/QnA.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+import { marked } from 'marked';
+
+export function getStaticPaths() {
+  const contentDir = path.join(process.cwd(), 'src/content');
+  const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.md'));
+
+  return files.map(file => ({
+    params: { slug: file.replace('.md', '') }
+  }));
+}
+
+const { slug } = Astro.params;
+const contentDir = path.join(process.cwd(), 'src/content');
+const filePath = path.join(contentDir, `${slug}.md`);
+const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+// Frontmatter 파싱
+const frontmatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
+const frontmatter = frontmatterMatch ? frontmatterMatch[1] : '';
+const content = fileContent.replace(/^---\n[\s\S]*?\n---\n*/, '');
+
+const getValue = (key: string) => {
+  const match = frontmatter.match(new RegExp(`${key}:\\s*"?([^"\\n]+)"?`));
+  return match ? match[1].replace(/^"|"$/g, '') : '';
+};
+
+const title = getValue('title');
+const date = getValue('date');
+const excerpt = getValue('excerpt');
+
+// 날짜 포맷팅
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// 읽기 시간 계산
+function getReadingTime(text: string): string {
+  const words = text.trim().split(/\s+/).length;
+  const minutes = Math.ceil(words / 200);
+  return `${minutes} min read`;
+}
+
+// QnA 추출
+function extractQnA(content: string) {
+  const qnaSection = content.match(/## 자주 묻는 질문[\s\S]*$/);
+  if (!qnaSection) return [];
+
+  const items: { question: string; answer: string }[] = [];
+  const qnaContent = qnaSection[0];
+  const questionBlocks = qnaContent.split(/### Q\d*\.\s*/).slice(1);
+
+  questionBlocks.forEach(block => {
+    const lines = block.trim().split('\n');
+    const question = lines[0]?.trim() || '';
+    const answerMatch = block.match(/\*\*A\.\*\*\s*([\s\S]*?)(?=### Q|$)/);
+    const answer = answerMatch ? answerMatch[1].trim() : lines.slice(1).join('\n').replace(/^\*\*A\.\*\*\s*/, '').trim();
+
+    if (question) {
+      items.push({ question, answer });
+    }
+  });
+
+  return items;
+}
+
+// QnA 섹션 제거
+function removeQnASection(content: string): string {
+  return content.replace(/## 자주 묻는 질문[\s\S]*$/, '').trim();
+}
+
+// TOC 추출
+function extractToc(content: string) {
+  const items: { id: string; text: string; level: number }[] = [];
+  const regex = /^(#{2,3})\s+(.+)$/gm;
+  let match;
+
+  while ((match = regex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w가-힣-]/g, '');
+    items.push({ id, text, level });
+  }
+
+  return items;
+}
+
+const qnaItems = extractQnA(content);
+const contentWithoutQnA = removeQnASection(content);
+const tocItems = extractToc(contentWithoutQnA);
+
+// 마크다운을 HTML로 변환
+const renderer = new marked.Renderer();
+renderer.heading = ({ text, depth }) => {
+  const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w가-힣-]/g, '');
+  return `<h${depth} id="${id}">${text}</h${depth}>`;
+};
+
+marked.setOptions({ renderer, gfm: true });
+const contentHtml = marked.parse(contentWithoutQnA);
+
+const canonicalUrl = `https://www.stocktipguide.xyz/${slug}`;
+const readingTime = getReadingTime(content);
+
+// Article Schema
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": excerpt,
+  "image": "https://www.stocktipguide.xyz/og-image.png",
+  "author": {
+    "@type": "Organization",
+    "name": "주식팁가이드",
+    "url": "https://www.stocktipguide.xyz"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "주식팁가이드",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.stocktipguide.xyz/logo.png",
+      "width": 180,
+      "height": 40
+    }
+  },
+  "datePublished": date,
+  "dateModified": date,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  }
+};
+
+// FAQ Schema
+const faqSchema = qnaItems.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": qnaItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+} : null;
+---
+
+<Layout
+  title={title}
+  description={excerpt}
+  canonicalUrl={canonicalUrl}
+  articleDate={date}
+>
+  <Header />
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <article class="relative flex-1 min-w-0">
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+      {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+
+      <div class="mb-8">
+        <h1 class="text-[42px] font-black leading-tight mb-4">
+          {title}
+        </h1>
+        <div class="flex gap-4 text-sm text-gray-600">
+          <time datetime={date}>{formatDate(date)}</time>
+          <span>{readingTime}</span>
+        </div>
+      </div>
+
+      <div class="prose prose-lg max-w-none" set:html={contentHtml} />
+
+      <QnA items={qnaItems} />
+    </article>
+
+    <aside class="hidden lg:block w-64 flex-shrink-0">
+      <TableOfContents items={tocItems} />
+    </aside>
+  </div>
+</Layout>

@@ -1,9 +1,9 @@
 # Dependencies
 node_modules/
 
-# Next.js
-.next/
-out/
+# Astro
+dist/
+.astro/
 
 # Environment
 .env

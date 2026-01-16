@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import StockCard from '../components/StockCard.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// 콘텐츠 파일 읽기
+function getStocks() {
+  const contentDir = path.join(process.cwd(), 'src/content');
+  const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.md'));
+
+  const stocks = files.map(file => {
+    const content = fs.readFileSync(path.join(contentDir, file), 'utf-8');
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+
+    if (!frontmatterMatch) return null;
+
+    const frontmatter = frontmatterMatch[1];
+    const getValue = (key: string) => {
+      const match = frontmatter.match(new RegExp(`${key}:\\s*"?([^"\\n]+)"?`));
+      return match ? match[1].replace(/^"|"$/g, '') : '';
+    };
+
+    return {
+      slug: file.replace('.md', ''),
+      title: getValue('title'),
+      date: getValue('date'),
+      excerpt: getValue('excerpt').substring(0, 100) + '...',
+    };
+  }).filter(Boolean);
+
+  // 날짜 내림차순 정렬
+  return stocks.sort((a, b) => new Date(b!.date).getTime() - new Date(a!.date).getTime());
+}
+
+const stocks = getStocks();
+---
+
+<Layout title="주식팁가이드">
+  <Header />
+  <main>
+    <div class="relative -top-[10px] flex flex-col gap-8">
+      {stocks.length === 0 ? (
+        <p>아직 글이 없습니다.</p>
+      ) : (
+        stocks.map((stock) => (
+          <StockCard {...stock} />
+        ))
+      )}
+    </div>
+  </main>
+</Layout>
