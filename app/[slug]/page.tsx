@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Header from "@/components/Header";
-import TableOfContents from "@/components/TableOfContents";
+import TableOfContents, { extractTocFromMarkdown } from "@/components/TableOfContents";
 import QnA from "@/components/QnA";
 import { getStockBySlug, getSortedPropertiesData } from "@/lib/stocks";
 import { extractQnA, removeQnASection } from "@/lib/qna-utils";
@@ -76,6 +76,7 @@ export default async function StockPage({ params }: Props) {
 
   const qnaItems = extractQnA(property.content);
   const contentWithoutQnA = removeQnASection(property.content);
+  const tocItems = extractTocFromMarkdown(contentWithoutQnA);
 
   const articleUrl = `https://www.stocktipguide.xyz/${slug}`;
 
@@ -197,7 +198,7 @@ export default async function StockPage({ params }: Props) {
         </article>
 
         <aside className="hidden lg:block w-64 flex-shrink-0">
-          <TableOfContents />
+          <TableOfContents items={tocItems} />
         </aside>
       </div>
     </>

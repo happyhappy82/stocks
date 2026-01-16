@@ -1,54 +1,50 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import Link from "./Link";
-
 interface TocItem {
   id: string;
   text: string;
   level: number;
 }
 
-export default function TableOfContents() {
-  const [toc, setToc] = useState<TocItem[]>([]);
+interface TableOfContentsProps {
+  items: TocItem[];
+}
 
-  useEffect(() => {
-    const headings = document.querySelectorAll("article h2, article h3");
-    const items: TocItem[] = [];
-
-    headings.forEach((heading) => {
-      const id = heading.id || heading.textContent?.toLowerCase().replace(/\s+/g, "-") || "";
-      const text = heading.textContent || "";
-      const level = parseInt(heading.tagName.substring(1));
-
-      if (id && text) {
-        items.push({ id, text, level });
-      }
-    });
-
-    setToc(items);
-  }, []);
-
-  if (toc.length === 0) return null;
+export default function TableOfContents({ items }: TableOfContentsProps) {
+  if (items.length === 0) return null;
 
   return (
     <nav className="sticky top-8 p-5 bg-gray-50 rounded-lg">
       <h2 className="text-lg font-bold mb-4">목차</h2>
       <ul className="space-y-2 text-sm">
-        {toc.map((item) => (
+        {items.map((item) => (
           <li
             key={item.id}
             style={{ marginLeft: `${(item.level - 2) * 0.75}rem` }}
           >
-            <Link
+            <a
               href={`#${item.id}`}
               className="text-gray-600 hover:text-blue-600 hover:underline"
             >
               {item.text}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
     </nav>
   );
+}
+
+// 빌드타임에 마크다운에서 목차 추출하는 유틸리티 함수
+export function extractTocFromMarkdown(content: string): TocItem[] {
+  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+  const items: TocItem[] = [];
+  let match;
+
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/\s+/g, "-");
+    items.push({ id, text, level });
+  }
+
+  return items;
 }

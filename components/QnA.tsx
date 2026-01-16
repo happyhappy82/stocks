@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 interface QnAItem {
   question: string;
   answer: string;
@@ -12,8 +8,6 @@ interface QnAProps {
 }
 
 export default function QnA({ items }: QnAProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   if (items.length === 0) return null;
 
   return (
@@ -21,22 +15,15 @@ export default function QnA({ items }: QnAProps) {
       <h2 className="text-2xl font-bold mb-6">자주 묻는 질문</h2>
       <div className="space-y-4">
         {items.map((item, index) => (
-          <div key={index} className="border rounded-lg">
-            <button
-              className="w-full text-left p-4 font-semibold hover:bg-gray-50 flex justify-between items-center"
-              onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            >
+          <details key={index} className="border rounded-lg group">
+            <summary className="w-full text-left p-4 font-semibold hover:bg-gray-50 flex justify-between items-center cursor-pointer list-none [&::-webkit-details-marker]:hidden">
               <span>{item.question}</span>
-              <span className="text-2xl">
-                {openIndex === index ? "−" : "+"}
-              </span>
-            </button>
-            {openIndex === index && (
-              <div className="p-4 pt-0 text-gray-700 whitespace-pre-wrap">
-                {item.answer}
-              </div>
-            )}
-          </div>
+              <span className="text-2xl transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <div className="p-4 pt-0 text-gray-700 whitespace-pre-wrap">
+              {item.answer}
+            </div>
+          </details>
         ))}
       </div>
     </div>
