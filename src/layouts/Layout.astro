@@ -85,7 +85,9 @@ const GA_ID = "G-2H8Y5GG1MZ";
     })} />
   </head>
   <body class="mx-auto max-w-6xl bg-white px-5 py-12 text-black">
-    <slot />
+    <div class="max-w-2xl mx-auto">
+      <slot />
+    </div>
 
     <!-- Google Analytics (로드 지연) -->
     <script define:vars={{ GA_ID, GTM_ID }}>
