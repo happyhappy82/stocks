@@ -66,7 +66,7 @@ jobs:
       - name: Commit and push changes
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
-          git add -A content/stocks/
+          git add -A src/content/
           git add -A public/notion-images/
           git add public/sitemap.xml
 
