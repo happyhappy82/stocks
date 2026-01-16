@@ -28,11 +28,15 @@ body {
 }
 
 .prose table {
-  @apply w-full my-6 border-collapse;
+  @apply w-full my-6 border-collapse table-auto;
 }
 
 .prose th, .prose td {
   @apply border border-gray-300 px-4 py-2 text-left;
+}
+
+.prose td:first-child, .prose th:first-child {
+  @apply whitespace-nowrap;
 }
 
 .prose th {
