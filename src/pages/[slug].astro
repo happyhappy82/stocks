@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 import QnA from '../components/QnA.astro';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -75,8 +76,25 @@ function removeQnASection(content: string): string {
   return content.replace(/## 자주 묻는 질문[\s\S]*$/, '').trim();
 }
 
+// TOC 추출
+function extractToc(content: string) {
+  const items: { id: string; text: string; level: number }[] = [];
+  const regex = /^(#{2,3})\s+(.+)$/gm;
+  let match;
+
+  while ((match = regex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w가-힣-]/g, '');
+    items.push({ id, text, level });
+  }
+
+  return items;
+}
+
 const qnaItems = extractQnA(content);
 const contentWithoutQnA = removeQnASection(content);
+const tocItems = extractToc(contentWithoutQnA);
 
 // 마크다운을 HTML로 변환
 const renderer = new marked.Renderer();
@@ -144,22 +162,28 @@ const faqSchema = qnaItems.length > 0 ? {
 >
   <Header />
 
-  <article>
-    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
-    {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+  <div class="flex flex-col lg:flex-row gap-8">
+    <article class="relative flex-1 min-w-0">
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+      {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 
-    <div class="mb-8">
-      <h1 class="text-[42px] font-black leading-tight mb-4">
-        {title}
-      </h1>
-      <div class="flex gap-4 text-sm text-gray-600">
-        <time datetime={date}>{formatDate(date)}</time>
-        <span>{readingTime}</span>
+      <div class="mb-8">
+        <h1 class="text-[42px] font-black leading-tight mb-4">
+          {title}
+        </h1>
+        <div class="flex gap-4 text-sm text-gray-600">
+          <time datetime={date}>{formatDate(date)}</time>
+          <span>{readingTime}</span>
+        </div>
       </div>
-    </div>
 
-    <div class="prose prose-lg max-w-none" set:html={contentHtml} />
+      <div class="prose prose-lg max-w-none" set:html={contentHtml} />
 
-    <QnA items={qnaItems} />
-  </article>
+      <QnA items={qnaItems} />
+    </article>
+
+    <aside class="hidden lg:block w-64 flex-shrink-0">
+      <TableOfContents items={tocItems} />
+    </aside>
+  </div>
 </Layout>
