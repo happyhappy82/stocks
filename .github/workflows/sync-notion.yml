@@ -39,12 +39,14 @@ jobs:
           SYNC_ACTION: ${{ github.event.client_payload.action }}
           SYNC_PAGE_ID: ${{ github.event.client_payload.page_id }}
           TRIGGER_TYPE: ${{ github.event_name }}
-        run: node scripts/sync-notion.js
+        run: node scripts/sync-notion.cjs
 
       - name: Generate sitemap.xml
+        env:
+          SITE_URL: https://www.stocktipguide.xyz
         run: |
           echo "🗺️ Generating sitemap.xml..."
-          node scripts/generate-sitemap.js
+          node scripts/generate-sitemap.cjs
 
       - name: Check for changes
         id: check_changes
@@ -99,12 +101,12 @@ jobs:
       - name: Submit to Google Search Console
         if: steps.check_slug.outputs.has_slug == 'true'
         env:
-          SITE_URL: https://stockreviewlab.xyz
+          SITE_URL: https://www.stocktipguide.xyz
           PUBLISHED_SLUG: ${{ steps.check_slug.outputs.published_slug }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
           echo "🔍 Google Search Console에 URL 제출 중..."
-          node scripts/google-indexing.js
+          node scripts/google-indexing.cjs
 
       - name: Report completion
         if: steps.check_changes.outputs.has_changes == 'true'

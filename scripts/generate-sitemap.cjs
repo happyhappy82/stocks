@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 
-const SITE_URL = 'https://stockreviewlab.xyz';
+const SITE_URL = process.env.SITE_URL || 'https://www.stocktipguide.xyz';
 const stocksDirectory = path.join(process.cwd(), 'src/content');
 const publicDirectory = path.join(process.cwd(), 'public');
 
