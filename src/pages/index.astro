@@ -38,9 +38,10 @@ const stocks = getStocks();
 ---
 
 <Layout title="주식팁가이드">
-  <Header />
-  <main>
-    <div class="relative -top-[10px] flex flex-col gap-8">
+  <div class="max-w-2xl mx-auto">
+    <Header />
+    <main>
+      <div class="relative -top-[10px] flex flex-col gap-8">
       {stocks.length === 0 ? (
         <p>아직 글이 없습니다.</p>
       ) : (
@@ -48,6 +49,7 @@ const stocks = getStocks();
           <StockCard {...stock} />
         ))
       )}
-    </div>
-  </main>
+      </div>
+    </main>
+  </div>
 </Layout>

@@ -160,10 +160,9 @@ const faqSchema = qnaItems.length > 0 ? {
   canonicalUrl={canonicalUrl}
   articleDate={date}
 >
-  <Header />
-
-  <div class="flex flex-col lg:flex-row gap-8">
-    <article class="relative flex-1 min-w-0">
+  <div class="max-w-2xl mx-auto lg:max-w-none lg:flex lg:gap-8 lg:justify-center">
+    <article class="max-w-2xl w-full">
+      <Header />
       <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
       {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 
