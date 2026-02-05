@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+import KeyboardShortcuts from '../../components/KeyboardShortcuts.astro';
 
 const title = "코카콜라 배당금 계산기";
 const description = "코카콜라(KO) 주식 배당금을 계산하세요. 보유 주수를 입력하면 연간·분기·월별 예상 배당금, 미국 원천징수세(15%), 원화 환산 실수령액까지 자동으로 계산해드립니다. 62년 연속 배당 인상 기록의 배당킹 코카콜라 투자 정보를 확인하세요.";
@@ -177,9 +178,10 @@ const faqSchema = {
 
       <button
         id="calcBtn"
-        class="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-base"
+        class="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-base flex items-center justify-center gap-2"
       >
         계산하기
+        <kbd class="hidden sm:inline-flex px-1.5 py-0.5 bg-blue-500/50 border border-blue-400/30 rounded text-xs font-mono">Ctrl+Enter</kbd>
       </button>
 
       <!-- 결과 -->
@@ -477,6 +479,7 @@ const faqSchema = {
         ))}
       </div>
     </div>
+    <KeyboardShortcuts />
   </div>
 </Layout>
 

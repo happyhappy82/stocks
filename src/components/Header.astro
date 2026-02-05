@@ -1,6 +1,6 @@
 ---
 ---
-<header class="mb-14 flex flex-row place-content-between">
+<header class="mb-14 flex flex-row items-center place-content-between">
   <div class="flex items-center gap-3">
     <a href="/" class="inline-block">
       <picture>
@@ -16,4 +16,120 @@
       </picture>
     </a>
   </div>
+
+  <!-- 계산기 네비게이션 -->
+  <nav class="relative" id="calcNav">
+    <button
+      id="calcDropdownBtn"
+      class="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+      </svg>
+      <span class="hidden sm:inline">계산기</span>
+      <svg id="calcDropdownArrow" class="w-3.5 h-3.5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <!-- 드롭다운 메뉴 -->
+    <div
+      id="calcDropdownMenu"
+      class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 hidden z-50"
+    >
+      <a
+        href="/calculators/미국-주식-배당금-계산기"
+        class="calc-menu-item flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+      >
+        <span class="flex-shrink-0 w-7 h-7 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+        <div>
+          <p class="font-medium">미국 주식 배당금</p>
+          <p class="text-xs text-gray-400">배당금 세전·세후 계산</p>
+        </div>
+      </a>
+      <a
+        href="/calculators/배당금-종합소득세-계산기"
+        class="calc-menu-item flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+      >
+        <span class="flex-shrink-0 w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+        <div>
+          <p class="font-medium">배당금 종합소득세</p>
+          <p class="text-xs text-gray-400">종합과세 여부 확인</p>
+        </div>
+      </a>
+      <a
+        href="/calculators/배당금-재투자-계산기"
+        class="calc-menu-item flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+      >
+        <span class="flex-shrink-0 w-7 h-7 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xs font-bold">3</span>
+        <div>
+          <p class="font-medium">배당금 재투자</p>
+          <p class="text-xs text-gray-400">DRIP 복리 시뮬레이션</p>
+        </div>
+      </a>
+      <a
+        href="/calculators/schd-배당금-계산기"
+        class="calc-menu-item flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+      >
+        <span class="flex-shrink-0 w-7 h-7 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-xs font-bold">4</span>
+        <div>
+          <p class="font-medium">SCHD 배당금</p>
+          <p class="text-xs text-gray-400">SCHD ETF 배당 계산</p>
+        </div>
+      </a>
+      <a
+        href="/calculators/코카콜라-배당금-계산기"
+        class="calc-menu-item flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+      >
+        <span class="flex-shrink-0 w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center text-xs font-bold">5</span>
+        <div>
+          <p class="font-medium">코카콜라 배당금</p>
+          <p class="text-xs text-gray-400">KO 배당킹 배당 계산</p>
+        </div>
+      </a>
+    </div>
+  </nav>
 </header>
+
+<script>
+  const btn = document.getElementById('calcDropdownBtn')!;
+  const menu = document.getElementById('calcDropdownMenu')!;
+  const arrow = document.getElementById('calcDropdownArrow')!;
+
+  function toggleMenu() {
+    const isOpen = !menu.classList.contains('hidden');
+    if (isOpen) {
+      menu.classList.add('hidden');
+      arrow.classList.remove('rotate-180');
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      menu.classList.remove('hidden');
+      arrow.classList.add('rotate-180');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // 외부 클릭 시 닫기
+  document.addEventListener('click', (e) => {
+    if (!menu.classList.contains('hidden') && !(e.target as HTMLElement).closest('#calcNav')) {
+      menu.classList.add('hidden');
+      arrow.classList.remove('rotate-180');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // 현재 페이지 하이라이트
+  const currentPath = window.location.pathname;
+  document.querySelectorAll<HTMLAnchorElement>('.calc-menu-item').forEach(item => {
+    if (item.getAttribute('href') === currentPath) {
+      item.classList.add('bg-blue-50', 'text-blue-700', 'font-semibold');
+    }
+  });
+</script>

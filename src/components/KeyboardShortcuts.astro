@@ -1,0 +1,292 @@
+---
+/**
+ * 키보드 단축키 컴포넌트
+ * 계산기 페이지에서 단축키로 계산, 초기화, 페이지 이동을 지원합니다.
+ */
+---
+
+<!-- 단축키 도움말 버튼 (우하단 고정) -->
+<button
+  id="shortcutToggleBtn"
+  class="fixed bottom-5 right-5 z-50 w-11 h-11 bg-gray-900 text-white rounded-xl shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors text-sm font-mono"
+  aria-label="단축키 도움말 열기"
+>
+  <span class="text-base">⌨</span>
+</button>
+
+<!-- 단축키 도움말 패널 -->
+<div
+  id="shortcutPanel"
+  class="fixed inset-0 z-[100] hidden"
+>
+  <!-- 배경 오버레이 -->
+  <div id="shortcutOverlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <!-- 패널 본체 -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-[420px] max-w-[90vw] max-h-[80vh] overflow-auto">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="text-lg font-bold text-gray-900">키보드 단축키</h3>
+        <button id="shortcutCloseBtn" class="text-gray-400 hover:text-gray-600 transition-colors" aria-label="닫기">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- 동작 단축키 -->
+      <div class="mb-5">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">동작</p>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">계산하기</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Ctrl</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Enter</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">초기화</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">R</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">첫 번째 입력 필드 포커스</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">F</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 네비게이션 단축키 -->
+      <div class="mb-5">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">계산기 이동</p>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">미국 주식 배당금</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">1</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">종합소득세</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">2</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">배당금 재투자</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">3</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">SCHD 배당금</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">4</kbd>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">코카콜라 배당금</span>
+            <div class="flex gap-1">
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Alt</kbd>
+              <span class="text-gray-400 text-xs">+</span>
+              <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">5</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기타 -->
+      <div>
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">기타</p>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">단축키 도움말 열기/닫기</span>
+            <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">?</kbd>
+          </div>
+          <div class="flex justify-between items-center py-1.5">
+            <span class="text-sm text-gray-700">닫기</span>
+            <kbd class="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono text-gray-700">Esc</kbd>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 알림 -->
+<div
+  id="shortcutToast"
+  class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] hidden"
+>
+  <div class="bg-gray-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2">
+    <span id="toastIcon">⌨</span>
+    <span id="toastMessage"></span>
+  </div>
+</div>
+
+<script>
+  const CALC_ROUTES: Record<string, string> = {
+    '1': '/calculators/미국-주식-배당금-계산기',
+    '2': '/calculators/배당금-종합소득세-계산기',
+    '3': '/calculators/배당금-재투자-계산기',
+    '4': '/calculators/schd-배당금-계산기',
+    '5': '/calculators/코카콜라-배당금-계산기',
+  };
+
+  const CALC_NAMES: Record<string, string> = {
+    '1': '미국 주식 배당금',
+    '2': '종합소득세',
+    '3': '배당금 재투자',
+    '4': 'SCHD 배당금',
+    '5': '코카콜라 배당금',
+  };
+
+  const panel = document.getElementById('shortcutPanel')!;
+  const overlay = document.getElementById('shortcutOverlay')!;
+  const toggleBtn = document.getElementById('shortcutToggleBtn')!;
+  const closeBtn = document.getElementById('shortcutCloseBtn')!;
+
+  function showPanel() {
+    panel.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hidePanel() {
+    panel.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function isPanelOpen() {
+    return !panel.classList.contains('hidden');
+  }
+
+  // 토스트 알림
+  let toastTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function showToast(message: string, icon = '⌨') {
+    const toast = document.getElementById('shortcutToast')!;
+    const toastMessage = document.getElementById('toastMessage')!;
+    const toastIcon = document.getElementById('toastIcon')!;
+
+    toastMessage.textContent = message;
+    toastIcon.textContent = icon;
+    toast.classList.remove('hidden');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 1500);
+  }
+
+  // 패널 토글
+  toggleBtn.addEventListener('click', () => {
+    isPanelOpen() ? hidePanel() : showPanel();
+  });
+
+  closeBtn.addEventListener('click', hidePanel);
+  overlay.addEventListener('click', hidePanel);
+
+  // 키보드 이벤트
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
+    // Esc: 패널 닫기
+    if (e.key === 'Escape') {
+      if (isPanelOpen()) {
+        hidePanel();
+        e.preventDefault();
+      }
+      return;
+    }
+
+    // ?: 패널 토글 (입력 중이 아닐 때)
+    if (e.key === '?' && !isTyping) {
+      isPanelOpen() ? hidePanel() : showPanel();
+      e.preventDefault();
+      return;
+    }
+
+    // Ctrl+Enter: 계산하기
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      const calcBtn = document.getElementById('calcBtn') as HTMLButtonElement | null;
+      if (calcBtn) {
+        calcBtn.click();
+        showToast('계산 완료', '✅');
+
+        // 버튼 시각 피드백
+        calcBtn.classList.add('ring-2', 'ring-blue-300', 'ring-offset-2');
+        setTimeout(() => calcBtn.classList.remove('ring-2', 'ring-blue-300', 'ring-offset-2'), 300);
+      }
+      e.preventDefault();
+      return;
+    }
+
+    // Alt+R: 초기화
+    if (e.altKey && (e.key === 'r' || e.key === 'R' || e.key === 'ㄱ')) {
+      const inputs = document.querySelectorAll<HTMLInputElement>('.bg-gray-50 input[type="number"]');
+      inputs.forEach(input => {
+        const defaultVal = input.getAttribute('value');
+        input.value = defaultVal || '';
+      });
+
+      // 라디오 버튼 초기화
+      const firstRadio = document.querySelector<HTMLInputElement>('input[type="radio"][checked]');
+      if (firstRadio) firstRadio.checked = true;
+
+      // 결과 숨기기
+      const result = document.getElementById('result');
+      if (result) result.classList.add('hidden');
+
+      showToast('초기화 완료', '🔄');
+      e.preventDefault();
+      return;
+    }
+
+    // Alt+F: 첫 번째 입력 필드 포커스
+    if (e.altKey && (e.key === 'f' || e.key === 'F' || e.key === 'ㄹ')) {
+      const firstInput = document.querySelector<HTMLInputElement>('.bg-gray-50 input[type="number"]');
+      if (firstInput) {
+        firstInput.focus();
+        firstInput.select();
+        showToast('입력 필드 포커스', '🎯');
+      }
+      e.preventDefault();
+      return;
+    }
+
+    // Alt+1~5: 계산기 이동
+    if (e.altKey && CALC_ROUTES[e.key]) {
+      const targetPath = CALC_ROUTES[e.key];
+      const currentPath = window.location.pathname;
+
+      if (currentPath === targetPath) {
+        showToast(`현재 페이지: ${CALC_NAMES[e.key]}`, '📍');
+      } else {
+        showToast(`${CALC_NAMES[e.key]} 계산기로 이동`, '🚀');
+        setTimeout(() => {
+          window.location.href = targetPath;
+        }, 300);
+      }
+      e.preventDefault();
+      return;
+    }
+  });
+</script>
