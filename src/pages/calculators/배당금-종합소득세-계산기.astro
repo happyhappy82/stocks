@@ -1,0 +1,668 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+
+const title = "배당금 종합소득세 계산기";
+const description = "배당금에 부과되는 종합소득세를 계산하세요. 연간 배당소득, 이자소득, 근로소득을 입력하면 금융소득종합과세 대상 여부와 예상 세금을 자동으로 계산해드립니다.";
+const canonicalUrl = "https://www.stocktipguide.xyz/calculators/배당금-종합소득세-계산기";
+
+const faqItems = [
+  {
+    question: "금융소득이 2,000만 원 이하면 세금 신고를 안 해도 되나요?",
+    answer: "네, 금융소득(이자+배당)이 연간 2,000만 원 이하인 경우, 원천징수(15.4%)로 과세가 종결되어 별도 신고가 필요 없습니다. 증권사나 은행에서 이미 세금을 공제하고 지급하므로, 추가 절차 없이 납세 의무가 완료됩니다."
+  },
+  {
+    question: "미국 주식 배당금도 종합과세에 포함되나요?",
+    answer: "네, 미국 주식 배당금도 국내 주식과 동일하게 종합과세 대상입니다. 단, 미국에서 이미 납부한 원천징수세(15%)는 외국납부세액공제로 인정받을 수 있어 이중과세를 방지할 수 있습니다. 금융소득이 2,000만 원을 초과하면 5월 종합소득세 신고 시 함께 신고해야 합니다."
+  },
+  {
+    question: "건강보험료에도 영향이 있나요?",
+    answer: "네, 금융소득이 연간 1,000만 원을 초과하면 건강보험료 부과 대상이 됩니다. 직장가입자의 경우 금융소득의 일부가 건강보험료 산정에 포함되며, 지역가입자는 금융소득이 건강보험료에 직접 반영됩니다. 종합과세 기준(2,000만 원)보다 낮으므로 주의가 필요합니다."
+  },
+  {
+    question: "배당소득과 이자소득은 합산되나요?",
+    answer: "네, 배당소득과 이자소득은 모두 금융소득으로 분류되어 합산됩니다. 예를 들어 배당소득 1,500만 원, 이자소득 800만 원이면 총 금융소득 2,300만 원으로 종합과세 대상이 됩니다. 예금 이자, 채권 이자, 주식 배당금 등 모든 금융소득이 포함됩니다."
+  },
+  {
+    question: "종합소득세 신고는 언제 하나요?",
+    answer: "종합소득세 신고는 매년 5월 1일부터 5월 31일까지입니다. 전년도(1월 1일~12월 31일)의 모든 소득을 합산하여 신고하며, 홈택스 또는 세무서를 통해 신고할 수 있습니다. 금융소득이 2,000만 원을 초과한 경우 반드시 신고해야 하며, 미신고 시 가산세가 부과됩니다."
+  }
+];
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": title,
+  "description": description,
+  "url": canonicalUrl,
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "KRW"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "주식팁가이드",
+    "url": "https://www.stocktipguide.xyz"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+>
+  <div class="max-w-2xl mx-auto">
+    <Header />
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+    <div class="mb-8">
+      <h1 class="text-[42px] font-black leading-tight mb-4">
+        {title}
+      </h1>
+      <p class="text-gray-600 leading-relaxed">
+        배당소득, 이자소득, 근로소득을 입력하면 금융소득종합과세 여부와 예상 세금을 확인할 수 있습니다.
+      </p>
+    </div>
+
+    <!-- 계산기 -->
+    <div class="bg-gray-50 rounded-2xl p-6 mb-12 border border-gray-200">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label for="dividendIncome" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 배당소득 (만원)</label>
+          <input
+            type="number"
+            id="dividendIncome"
+            placeholder="예: 3000"
+            step="10"
+            min="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="interestIncome" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 이자소득 (만원)</label>
+          <input
+            type="number"
+            id="interestIncome"
+            placeholder="예: 200"
+            step="10"
+            min="0"
+            value="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="earnedIncome" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 근로소득 (만원)</label>
+          <input
+            type="number"
+            id="earnedIncome"
+            placeholder="예: 5000"
+            step="100"
+            min="0"
+            value="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">배당소득 출처</label>
+          <div class="space-y-2">
+            <label class="flex items-center text-sm">
+              <input type="radio" name="source" value="domestic" checked class="mr-2">
+              <span>국내 주식</span>
+            </label>
+            <label class="flex items-center text-sm">
+              <input type="radio" name="source" value="us" class="mr-2">
+              <span>미국 주식</span>
+            </label>
+            <label class="flex items-center text-sm">
+              <input type="radio" name="source" value="mixed" class="mr-2">
+              <span>혼합</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button
+        id="calcBtn"
+        class="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-base"
+      >
+        계산하기
+      </button>
+
+      <!-- 결과 -->
+      <div id="result" class="hidden mt-6">
+        <div class="h-px bg-gray-200 mb-6"></div>
+        <h2 class="text-lg font-bold mb-4">계산 결과</h2>
+
+        <div class="space-y-3">
+          <!-- Step 1: 금융소득 합계 -->
+          <div id="financialIncomeCard" class="rounded-xl p-4 border">
+            <p class="text-sm font-semibold mb-2">금융소득 합계</p>
+            <div class="flex items-baseline gap-2 mb-2">
+              <span id="totalFinancialIncome" class="text-2xl font-bold">0만원</span>
+            </div>
+            <div class="text-sm">
+              <span class="text-gray-600">배당소득: </span>
+              <span id="dividendDisplay" class="font-medium">0만원</span>
+              <span class="text-gray-600"> + 이자소득: </span>
+              <span id="interestDisplay" class="font-medium">0만원</span>
+            </div>
+            <div id="comprehensiveStatus" class="mt-3 pt-3 border-t"></div>
+          </div>
+
+          <!-- Step 2 & 3: 세금 계산 결과 -->
+          <div id="taxBreakdown" class="space-y-3"></div>
+
+          <!-- 요약 카드 -->
+          <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+            <p class="text-sm text-blue-600 font-semibold mb-3">세금 요약</p>
+            <div class="grid grid-cols-2 gap-y-2 text-sm">
+              <span class="text-blue-700">총 금융소득</span>
+              <span id="summaryIncome" class="text-right font-bold text-blue-900">0만원</span>
+              <span class="text-blue-700">총 납부 세금</span>
+              <span id="summaryTax" class="text-right font-bold text-blue-900">0만원</span>
+              <span class="text-blue-700">실효세율</span>
+              <span id="summaryRate" class="text-right font-bold text-blue-900">0%</span>
+              <span class="text-blue-700">세후 실수령액</span>
+              <span id="summaryNet" class="text-right font-bold text-blue-900">0만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO 콘텐츠 -->
+    <div class="prose prose-lg max-w-none">
+      <h2>배당금 종합소득세란?</h2>
+      <p>
+        배당금 종합소득세는 <strong>금융소득종합과세 제도</strong>에 따라 부과되는 세금입니다.
+        금융소득(이자소득 + 배당소득)이 연간 2,000만 원을 초과하면, 초과분에 대해 다른 소득과 합산하여 종합소득세율을 적용합니다.
+      </p>
+      <p>
+        2,000만 원 이하인 경우에는 원천징수세율 <strong>15.4%</strong>(소득세 14% + 지방소득세 1.4%)가 적용되며, 이것으로 납세 의무가 종결됩니다.
+      </p>
+
+      <h2>금융소득종합과세 기준</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>금융소득 구간</th>
+            <th>과세 방식</th>
+            <th>세율</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2,000만 원 이하</td>
+            <td>분리과세 (원천징수)</td>
+            <td>15.4%</td>
+          </tr>
+          <tr>
+            <td>2,000만 원 초과</td>
+            <td>종합과세</td>
+            <td>6% ~ 45% (누진세율)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        연간 금융소득이 2,000만 원을 초과하면, 2,000만 원까지는 15.4% 분리과세를 적용하고,
+        초과분은 근로소득 등 다른 소득과 합산하여 종합소득세율(6%~45%)을 적용합니다.
+      </p>
+
+      <h2>종합소득세 세율 구간</h2>
+      <p>2024년 기준 종합소득세 세율 구간은 다음과 같습니다:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>과세표준</th>
+            <th>세율</th>
+            <th>누진공제</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1,400만 원 이하</td>
+            <td>6%</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>1,400만 원 ~ 5,000만 원</td>
+            <td>15%</td>
+            <td>126만 원</td>
+          </tr>
+          <tr>
+            <td>5,000만 원 ~ 8,800만 원</td>
+            <td>24%</td>
+            <td>576만 원</td>
+          </tr>
+          <tr>
+            <td>8,800만 원 ~ 1.5억 원</td>
+            <td>35%</td>
+            <td>1,544만 원</td>
+          </tr>
+          <tr>
+            <td>1.5억 원 ~ 3억 원</td>
+            <td>38%</td>
+            <td>1,994만 원</td>
+          </tr>
+          <tr>
+            <td>3억 원 ~ 5억 원</td>
+            <td>40%</td>
+            <td>2,594만 원</td>
+          </tr>
+          <tr>
+            <td>5억 원 ~ 10억 원</td>
+            <td>42%</td>
+            <td>3,594만 원</td>
+          </tr>
+          <tr>
+            <td>10억 원 초과</td>
+            <td>45%</td>
+            <td>6,594만 원</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        지방소득세는 종합소득세의 10%가 추가로 부과됩니다.
+        예를 들어 종합소득세가 100만 원이면 지방소득세 10만 원이 추가되어 총 110만 원을 납부합니다.
+      </p>
+
+      <h2>미국 주식 배당금 세금 처리</h2>
+      <p>
+        미국 주식에서 받은 배당금도 국내 주식과 동일하게 금융소득종합과세 대상입니다.
+        단, 미국에서 이미 납부한 <strong>원천징수세 15%</strong>는 외국납부세액공제로 인정받을 수 있습니다.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>국내 주식</th>
+            <th>미국 주식</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>원천징수세</td>
+            <td>15.4%</td>
+            <td>15% (미국) + 0.4% (한국)</td>
+          </tr>
+          <tr>
+            <td>외국납부세액공제</td>
+            <td>해당 없음</td>
+            <td>가능 (미국 납부 15%)</td>
+          </tr>
+          <tr>
+            <td>종합과세 시</td>
+            <td>전액 과세</td>
+            <td>미국 세금 공제 후 과세</td>
+          </tr>
+          <tr>
+            <td>이중과세</td>
+            <td>없음</td>
+            <td>방지 (세액공제)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        미국 주식 배당금이 종합과세 대상이 되더라도, 미국에서 납부한 세금은 공제되므로 실제 세 부담은 국내 주식과 비슷하거나 약간 높은 수준입니다.
+      </p>
+
+      <h2>배당 소득세 절세 전략</h2>
+      <ul>
+        <li>
+          <strong>ISA 계좌 활용</strong>: ISA(개인종합자산관리계좌)는 배당소득에 대해 200만 원(서민형 400만 원)까지 비과세 혜택을 제공합니다.
+          금융소득종합과세 대상자에게 특히 유리합니다.
+        </li>
+        <li>
+          <strong>부부 간 분산</strong>: 배우자와 투자 자산을 분산하여 각각 2,000만 원 이하로 관리하면 종합과세를 피할 수 있습니다.
+        </li>
+        <li>
+          <strong>2,000만 원 관리</strong>: 금융소득을 연간 2,000만 원 이하로 관리하면 원천징수(15.4%)로 납세가 완료되어 추가 세 부담이 없습니다.
+        </li>
+        <li>
+          <strong>손익통산</strong>: 주식 매매 손실이 있다면 배당소득과 손익통산하여 과세표준을 낮출 수 있습니다.
+          (단, 상장주식 양도소득 손실과는 통산 불가)
+        </li>
+        <li>
+          <strong>분산 투자</strong>: 고배당 주식에 집중하기보다 배당과 시세차익을 균형 있게 추구하면 금융소득을 관리하기 유리합니다.
+        </li>
+        <li>
+          <strong>건강보험료 고려</strong>: 금융소득이 1,000만 원을 초과하면 건강보험료가 추가로 부과되므로, 이를 고려한 관리가 필요합니다.
+        </li>
+      </ul>
+    </div>
+
+    <!-- FAQ -->
+    <div class="mt-12 mb-8">
+      <h2 class="text-2xl font-bold mb-6">자주 묻는 질문</h2>
+      <div class="space-y-3">
+        {faqItems.map((item) => (
+          <details class="group bg-gray-50 rounded-xl border border-gray-200">
+            <summary class="flex justify-between items-center cursor-pointer p-4 font-semibold text-gray-900 list-none">
+              <span>{item.question}</span>
+              <svg class="w-5 h-5 text-gray-500 transition-transform group-open:rotate-180 flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-4 pb-4 text-gray-700 leading-relaxed">
+              {item.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function formatNumber(num: number): string {
+    return Math.round(num).toLocaleString('ko-KR');
+  }
+
+  // 종합소득세 누진세율 계산 (만원 단위)
+  function calculateProgressiveTax(income: number): number {
+    if (income <= 0) return 0;
+
+    const brackets = [
+      { limit: 1400, rate: 0.06, deduction: 0 },
+      { limit: 5000, rate: 0.15, deduction: 126 },
+      { limit: 8800, rate: 0.24, deduction: 576 },
+      { limit: 15000, rate: 0.35, deduction: 1544 },
+      { limit: 30000, rate: 0.38, deduction: 1994 },
+      { limit: 50000, rate: 0.40, deduction: 2594 },
+      { limit: 100000, rate: 0.42, deduction: 3594 },
+      { limit: Infinity, rate: 0.45, deduction: 6594 }
+    ];
+
+    for (const bracket of brackets) {
+      if (income <= bracket.limit) {
+        return income * bracket.rate - bracket.deduction;
+      }
+    }
+
+    return 0;
+  }
+
+  function calculate() {
+    const dividendIncome = parseFloat((document.getElementById('dividendIncome') as HTMLInputElement).value) || 0;
+    const interestIncome = parseFloat((document.getElementById('interestIncome') as HTMLInputElement).value) || 0;
+    const earnedIncome = parseFloat((document.getElementById('earnedIncome') as HTMLInputElement).value) || 0;
+    const source = (document.querySelector('input[name="source"]:checked') as HTMLInputElement)?.value || 'domestic';
+
+    if (dividendIncome <= 0) {
+      return;
+    }
+
+    const totalFinancialIncome = dividendIncome + interestIncome;
+    const isComprehensive = totalFinancialIncome > 2000;
+
+    // 결과 표시
+    const resultEl = document.getElementById('result');
+    if (resultEl) resultEl.classList.remove('hidden');
+
+    const setTextContent = (id: string, text: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    // Step 1: 금융소득 합계
+    setTextContent('totalFinancialIncome', formatNumber(totalFinancialIncome) + '만원');
+    setTextContent('dividendDisplay', formatNumber(dividendIncome) + '만원');
+    setTextContent('interestDisplay', formatNumber(interestIncome) + '만원');
+
+    const financialIncomeCard = document.getElementById('financialIncomeCard');
+    const comprehensiveStatus = document.getElementById('comprehensiveStatus');
+
+    if (isComprehensive) {
+      financialIncomeCard?.classList.remove('bg-green-50', 'border-green-100');
+      financialIncomeCard?.classList.add('bg-red-50', 'border-red-100');
+      if (comprehensiveStatus) {
+        comprehensiveStatus.innerHTML = `
+          <p class="text-sm font-semibold text-red-700">금융소득종합과세 대상</p>
+          <p class="text-xs text-red-600 mt-1">2,000만 원 초과로 종합소득세 신고 필요</p>
+        `;
+      }
+    } else {
+      financialIncomeCard?.classList.remove('bg-red-50', 'border-red-100');
+      financialIncomeCard?.classList.add('bg-green-50', 'border-green-100');
+      if (comprehensiveStatus) {
+        comprehensiveStatus.innerHTML = `
+          <p class="text-sm font-semibold text-green-700">분리과세 (원천징수)</p>
+          <p class="text-xs text-green-600 mt-1">2,000만 원 이하로 별도 신고 불필요</p>
+        `;
+      }
+    }
+
+    const taxBreakdown = document.getElementById('taxBreakdown');
+    if (!taxBreakdown) return;
+
+    let totalTax = 0;
+    let effectiveRate = 0;
+
+    if (!isComprehensive) {
+      // Step 2: 2,000만 원 이하 - 분리과세
+      let taxHtml = '';
+
+      if (source === 'domestic') {
+        // 국내 주식: 15.4% 원천징수
+        const domesticTax = totalFinancialIncome * 0.154;
+        totalTax = domesticTax;
+
+        taxHtml = `
+          <div class="bg-white rounded-xl p-4 border border-gray-100">
+            <p class="text-sm font-semibold text-gray-700 mb-3">세금 계산 (분리과세)</p>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">금융소득</span>
+                <span class="font-medium">${formatNumber(totalFinancialIncome)}만원</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">소득세 (14%)</span>
+                <span class="font-medium">${formatNumber(totalFinancialIncome * 0.14)}만원</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">지방소득세 (1.4%)</span>
+                <span class="font-medium">${formatNumber(totalFinancialIncome * 0.014)}만원</span>
+              </div>
+              <div class="h-px bg-gray-200 my-2"></div>
+              <div class="flex justify-between font-bold">
+                <span class="text-gray-900">총 세금</span>
+                <span class="text-red-600">${formatNumber(domesticTax)}만원</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (source === 'us') {
+        // 미국 주식: 미국 15% + 한국 0.4%
+        const usTax = dividendIncome * 0.15;
+        const krTax = totalFinancialIncome * 0.004;
+        totalTax = usTax + krTax;
+
+        taxHtml = `
+          <div class="bg-white rounded-xl p-4 border border-gray-100">
+            <p class="text-sm font-semibold text-gray-700 mb-3">세금 계산 (분리과세)</p>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">배당소득</span>
+                <span class="font-medium">${formatNumber(dividendIncome)}만원</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">미국 원천징수세 (15%)</span>
+                <span class="font-medium">${formatNumber(usTax)}만원</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">한국 지방소득세 (0.4%)</span>
+                <span class="font-medium">${formatNumber(krTax)}만원</span>
+              </div>
+              <div class="h-px bg-gray-200 my-2"></div>
+              <div class="flex justify-between font-bold">
+                <span class="text-gray-900">총 세금</span>
+                <span class="text-red-600">${formatNumber(totalTax)}만원</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // 혼합: 배당은 미국 15%, 전체는 15.4%로 근사
+        const mixedTax = dividendIncome * 0.15 + interestIncome * 0.154;
+        totalTax = mixedTax;
+
+        taxHtml = `
+          <div class="bg-white rounded-xl p-4 border border-gray-100">
+            <p class="text-sm font-semibold text-gray-700 mb-3">세금 계산 (분리과세)</p>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">배당소득 세금 (15%)</span>
+                <span class="font-medium">${formatNumber(dividendIncome * 0.15)}만원</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">이자소득 세금 (15.4%)</span>
+                <span class="font-medium">${formatNumber(interestIncome * 0.154)}만원</span>
+              </div>
+              <div class="h-px bg-gray-200 my-2"></div>
+              <div class="flex justify-between font-bold">
+                <span class="text-gray-900">총 세금</span>
+                <span class="text-red-600">${formatNumber(totalTax)}만원</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      taxBreakdown.innerHTML = taxHtml;
+      effectiveRate = (totalTax / totalFinancialIncome) * 100;
+
+    } else {
+      // Step 3: 2,000만 원 초과 - 종합과세
+      const separatedAmount = 2000;
+      const exceededAmount = totalFinancialIncome - 2000;
+
+      // 분리과세 부분 세금
+      const separatedTax = separatedAmount * 0.154;
+
+      // 종합과세 부분
+      const totalTaxableIncome = earnedIncome + exceededAmount;
+      const progressiveTax = calculateProgressiveTax(totalTaxableIncome);
+      const earnedOnlyTax = calculateProgressiveTax(earnedIncome);
+      const additionalTax = Math.max(0, progressiveTax - earnedOnlyTax);
+
+      // 지방소득세
+      const localTax = additionalTax * 0.1;
+
+      // 외국납부세액공제
+      let foreignTaxCredit = 0;
+      if (source === 'us') {
+        foreignTaxCredit = dividendIncome * 0.15;
+      } else if (source === 'mixed') {
+        foreignTaxCredit = dividendIncome * 0.075; // 혼합이므로 절반으로 근사
+      }
+
+      totalTax = separatedTax + additionalTax + localTax - foreignTaxCredit;
+      totalTax = Math.max(0, totalTax);
+
+      let taxHtml = `
+        <div class="bg-white rounded-xl p-4 border border-gray-100">
+          <p class="text-sm font-semibold text-gray-700 mb-3">분리과세 부분 (2,000만 원까지)</p>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">분리과세 대상</span>
+              <span class="font-medium">2,000만원</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">원천징수세 (15.4%)</span>
+              <span class="font-medium text-red-600">${formatNumber(separatedTax)}만원</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 border border-gray-100">
+          <p class="text-sm font-semibold text-gray-700 mb-3">종합과세 부분 (초과분)</p>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">초과 금융소득</span>
+              <span class="font-medium">${formatNumber(exceededAmount)}만원</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">근로소득</span>
+              <span class="font-medium">${formatNumber(earnedIncome)}만원</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">합산 과세표준</span>
+              <span class="font-medium">${formatNumber(totalTaxableIncome)}만원</span>
+            </div>
+            <div class="h-px bg-gray-200 my-2"></div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">종합소득세 (누진세율)</span>
+              <span class="font-medium">${formatNumber(additionalTax)}만원</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">지방소득세 (10%)</span>
+              <span class="font-medium">${formatNumber(localTax)}만원</span>
+            </div>
+      `;
+
+      if (foreignTaxCredit > 0) {
+        taxHtml += `
+            <div class="flex justify-between text-green-600">
+              <span>외국납부세액공제</span>
+              <span class="font-medium">-${formatNumber(foreignTaxCredit)}만원</span>
+            </div>
+        `;
+      }
+
+      taxHtml += `
+            <div class="h-px bg-gray-200 my-2"></div>
+            <div class="flex justify-between font-bold">
+              <span class="text-gray-900">종합과세 세금</span>
+              <span class="text-red-600">${formatNumber(additionalTax + localTax - foreignTaxCredit)}만원</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-red-700">총 납부 세금</span>
+            <span class="text-2xl font-bold text-red-700">${formatNumber(totalTax)}만원</span>
+          </div>
+        </div>
+      `;
+
+      taxBreakdown.innerHTML = taxHtml;
+      effectiveRate = (totalTax / totalFinancialIncome) * 100;
+    }
+
+    const netIncome = totalFinancialIncome - totalTax;
+
+    // 요약 카드
+    setTextContent('summaryIncome', formatNumber(totalFinancialIncome) + '만원');
+    setTextContent('summaryTax', formatNumber(totalTax) + '만원');
+    setTextContent('summaryRate', effectiveRate.toFixed(2) + '%');
+    setTextContent('summaryNet', formatNumber(netIncome) + '만원');
+  }
+
+  document.getElementById('calcBtn')?.addEventListener('click', calculate);
+
+  // Enter 키로도 계산
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('keypress', (e: Event) => {
+      if ((e as KeyboardEvent).key === 'Enter') calculate();
+    });
+  });
+</script>

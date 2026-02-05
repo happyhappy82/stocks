@@ -1,0 +1,502 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+
+const title = "배당금 재투자 계산기";
+const description = "배당금 재투자(DRIP) 효과를 시뮬레이션하세요. 초기 투자금, 월 적립금, 배당률, 배당 성장률을 입력하면 복리 효과로 자산이 어떻게 성장하는지 연도별로 확인할 수 있습니다.";
+const canonicalUrl = "https://www.stocktipguide.xyz/calculators/배당금-재투자-계산기";
+
+const faqItems = [
+  {
+    question: "배당금 재투자는 자동으로 되나요?",
+    answer: "해외 증권사(인터랙티브 브로커스, Schwab 등)는 DRIP(Dividend Reinvestment Plan) 기능을 제공하여 배당금이 자동으로 같은 종목에 재투자됩니다. 하지만 국내 증권사(키움, 미래에셋 등)는 자동 재투자 기능이 없어 배당금을 받으면 수동으로 매수해야 합니다."
+  },
+  {
+    question: "배당금 재투자 시 세금은 어떻게 되나요?",
+    answer: "배당금을 재투자하더라도 배당소득세는 발생합니다. 미국 주식의 경우 원천징수세 15%가 자동으로 공제되고, 남은 금액으로 주식을 재매수하게 됩니다. 배당을 받는 시점에 세금이 부과되므로, 재투자 여부와 관계없이 세금 처리는 동일합니다."
+  },
+  {
+    question: "배당 성장률이란 무엇인가요?",
+    answer: "배당 성장률은 기업이 매년 배당금을 인상하는 비율을 말합니다. 예를 들어, 올해 배당금이 주당 2달러이고 배당 성장률이 5%라면, 내년에는 2.10달러, 그 다음해는 2.21달러로 증가합니다. 배당 귀족주(Dividend Aristocrat)는 25년 이상 연속으로 배당을 인상한 기업들입니다."
+  },
+  {
+    question: "몇 년 이상 투자해야 복리 효과를 체감할 수 있나요?",
+    answer: "복리 효과는 보통 10년 이상 투자했을 때 확연히 드러납니다. 초기 5~7년은 원금과 적립금의 영향이 크지만, 10년을 넘어가면서 재투자된 배당금이 또 다시 배당금을 만들어내는 '이자의 이자' 효과가 커집니다. 20~30년 장기 투자 시 복리 효과는 매우 강력합니다."
+  },
+  {
+    question: "배당금 재투자와 주가 상승 중 어떤 게 더 중요한가요?",
+    answer: "둘 다 중요하지만, 투자 기간에 따라 영향이 다릅니다. 초기 10년은 주가 상승(자본이득)의 비중이 크고, 10년 이후부터는 재투자된 배당금의 복리 효과가 점점 커집니다. 20~30년 장기 투자 시에는 배당 재투자가 총 수익의 40~50% 이상을 차지할 수 있습니다."
+  }
+];
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": title,
+  "description": description,
+  "url": canonicalUrl,
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "KRW"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "주식팁가이드",
+    "url": "https://www.stocktipguide.xyz"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+>
+  <div class="max-w-2xl mx-auto">
+    <Header />
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+    <div class="mb-8">
+      <h1 class="text-[42px] font-black leading-tight mb-4">
+        {title}
+      </h1>
+      <p class="text-gray-600 leading-relaxed">
+        배당금을 재투자했을 때 복리 효과로 자산이 어떻게 성장하는지 시뮬레이션해보세요.
+      </p>
+    </div>
+
+    <!-- 계산기 -->
+    <div class="bg-gray-50 rounded-2xl p-6 mb-12 border border-gray-200">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label for="initialInvestment" class="block text-sm font-semibold text-gray-700 mb-1.5">초기 투자금 (USD)</label>
+          <input
+            type="number"
+            id="initialInvestment"
+            placeholder="10000"
+            step="100"
+            min="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="monthlyContribution" class="block text-sm font-semibold text-gray-700 mb-1.5">월 추가 투자금 (USD)</label>
+          <input
+            type="number"
+            id="monthlyContribution"
+            placeholder="500"
+            step="10"
+            min="0"
+            value="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="dividendYield" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 배당률 (%)</label>
+          <input
+            type="number"
+            id="dividendYield"
+            placeholder="3.5"
+            step="0.1"
+            min="0"
+            max="100"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="dividendGrowth" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 배당 성장률 (%)</label>
+          <input
+            type="number"
+            id="dividendGrowth"
+            placeholder="5"
+            step="0.1"
+            min="0"
+            max="100"
+            value="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="priceGrowth" class="block text-sm font-semibold text-gray-700 mb-1.5">연간 주가 상승률 (%)</label>
+          <input
+            type="number"
+            id="priceGrowth"
+            placeholder="7"
+            step="0.1"
+            min="-50"
+            max="100"
+            value="0"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div>
+          <label for="years" class="block text-sm font-semibold text-gray-700 mb-1.5">투자 기간 (년)</label>
+          <input
+            type="number"
+            id="years"
+            placeholder="20"
+            step="1"
+            min="1"
+            max="50"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+        <div class="sm:col-span-2">
+          <label for="exchangeRate" class="block text-sm font-semibold text-gray-700 mb-1.5">환율 (KRW/USD)</label>
+          <input
+            type="number"
+            id="exchangeRate"
+            placeholder="1450"
+            step="1"
+            min="0"
+            value="1450"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          />
+        </div>
+      </div>
+
+      <button
+        id="calcBtn"
+        class="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors text-base"
+      >
+        계산하기
+      </button>
+
+      <!-- 결과 -->
+      <div id="result" class="hidden mt-6">
+        <div class="h-px bg-gray-200 mb-6"></div>
+        <h2 class="text-lg font-bold mb-4">투자 결과 요약</h2>
+
+        <div class="space-y-3 mb-6">
+          <!-- 최종 자산 가치 -->
+          <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+            <p class="text-sm text-blue-600 font-semibold mb-1">최종 자산 가치</p>
+            <div class="flex items-baseline gap-2">
+              <span id="finalValue" class="text-2xl font-bold text-blue-700">$0.00</span>
+              <span id="finalValueKrw" class="text-sm text-blue-500"></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl p-4 border border-gray-100">
+              <p class="text-sm text-gray-500 mb-1">총 투자 원금</p>
+              <span id="totalContributed" class="text-lg font-bold text-gray-900">$0.00</span>
+              <span id="totalContributedKrw" class="block text-sm text-gray-500"></span>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-100">
+              <p class="text-sm text-gray-500 mb-1">총 누적 배당금</p>
+              <span id="totalDividends" class="text-lg font-bold text-gray-900">$0.00</span>
+              <span id="totalDividendsKrw" class="block text-sm text-gray-500"></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+              <p class="text-sm text-green-600 font-semibold mb-1">총 수익</p>
+              <span id="totalProfit" class="text-lg font-bold text-green-700">$0.00</span>
+              <span id="totalProfitKrw" class="block text-sm text-green-500"></span>
+            </div>
+            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+              <p class="text-sm text-green-600 font-semibold mb-1">총 수익률</p>
+              <span id="totalReturn" class="text-lg font-bold text-green-700">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 연도별 상세 테이블 -->
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <h3 class="text-sm font-bold text-gray-900">연도별 상세 내역</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">연도</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">투자 원금</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">배당률</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">연간 배당금</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">누적 배당금</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">자산 가치</th>
+                </tr>
+              </thead>
+              <tbody id="yearlyTable" class="divide-y divide-gray-100">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO 콘텐츠 -->
+    <div class="prose prose-lg max-w-none">
+      <h2>배당금 재투자(DRIP)란?</h2>
+      <p>
+        DRIP(Dividend Reinvestment Plan)은 배당금을 현금으로 받지 않고 자동으로 같은 주식에 재투자하는 전략입니다.
+        배당금으로 추가 주식을 매수하면, 더 많은 주식이 다시 배당금을 발생시켜 <strong>복리 효과</strong>가 나타납니다.
+      </p>
+      <p>
+        예를 들어, 100주를 보유하고 있고 배당률이 3%라면, 1년 후 배당금으로 3주를 더 살 수 있습니다.
+        이제 103주가 배당을 받으므로 다음 해에는 더 많은 배당금을 받게 됩니다. 이 과정이 수십 년 반복되면서
+        자산이 눈덩이처럼 불어나는 것이 배당금 재투자의 핵심입니다.
+      </p>
+
+      <h2>복리 효과의 힘</h2>
+      <p>
+        복리는 '이자의 이자'를 받는 구조로, 장기 투자에서 가장 강력한 무기입니다.
+        배당금 재투자는 이 복리 효과를 주식 투자에 적용한 것입니다.
+      </p>
+      <p>
+        <strong>예시:</strong> 1만 달러를 배당률 3%, 배당 성장률 5%로 20년 투자한다면?
+      </p>
+      <ul>
+        <li>배당금을 현금으로 받는 경우: 총 약 7,500달러의 배당금 수령 (원금 1만 달러 유지)</li>
+        <li>배당금을 재투자하는 경우: 복리 효과로 자산이 약 2만 6,000달러 이상으로 성장</li>
+      </ul>
+      <p>
+        같은 원금이지만 재투자 여부에 따라 결과가 크게 달라집니다. 특히 배당 성장률이 높은 종목(배당 귀족주 등)에
+        장기 투자하면 효과가 더욱 커집니다.
+      </p>
+
+      <h2>배당금 재투자 vs 현금 수령</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>배당금 재투자</th>
+            <th>현금 수령</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>복리 효과</td>
+            <td>강력한 복리 효과 (장기적으로 큰 차이)</td>
+            <td>복리 효과 없음</td>
+          </tr>
+          <tr>
+            <td>현금 흐름</td>
+            <td>없음 (자산 증식에 집중)</td>
+            <td>정기적인 현금 수령 가능</td>
+          </tr>
+          <tr>
+            <td>투자 기간</td>
+            <td>10년 이상 장기 투자에 유리</td>
+            <td>단기~중기 현금 필요 시</td>
+          </tr>
+          <tr>
+            <td>세금</td>
+            <td>재투자해도 배당소득세는 발생</td>
+            <td>배당소득세 발생</td>
+          </tr>
+          <tr>
+            <td>적합한 경우</td>
+            <td>은퇴 전, 자산 축적기</td>
+            <td>은퇴 후, 생활비 필요 시</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        은퇴 전 자산 축적기에는 배당금을 재투자하고, 은퇴 후에는 배당금을 생활비로 사용하는 것이
+        일반적인 전략입니다.
+      </p>
+
+      <h2>효과적인 배당금 재투자 전략</h2>
+      <ul>
+        <li>
+          <strong>적립식 투자 병행:</strong> 초기 투자금뿐 아니라 매월 일정 금액을 추가 투자하면
+          복리 효과가 더 빨리 나타납니다. 월 500달러씩 20년 투자하면 원금만 12만 달러가 됩니다.
+        </li>
+        <li>
+          <strong>배당 성장주 선택:</strong> 매년 배당을 인상하는 기업(배당 귀족주, 배당 왕)에 투자하면
+          배당 성장률까지 더해져 복리 효과가 극대화됩니다. 예: 코카콜라(KO), 존슨앤존슨(JNJ), 프록터앤갬블(PG).
+        </li>
+        <li>
+          <strong>분산투자:</strong> 한 종목보다는 배당 ETF(SCHD, VYM, DGRO 등)나 여러 배당주에
+          분산 투자하여 리스크를 줄입니다.
+        </li>
+        <li>
+          <strong>장기 보유:</strong> 복리 효과는 시간이 지날수록 커집니다. 최소 10년, 이상적으로는
+          20~30년 이상 장기 보유해야 진정한 위력을 발휘합니다.
+        </li>
+        <li>
+          <strong>해외 증권사 활용:</strong> 국내 증권사는 자동 재투자 기능이 없으므로, 인터랙티브 브로커스나
+          Schwab 같은 해외 증권사를 이용하면 DRIP 설정으로 자동 재투자가 가능합니다.
+        </li>
+      </ul>
+
+      <h2>배당금 재투자 시 유의사항</h2>
+      <ul>
+        <li>
+          <strong>세금은 여전히 발생:</strong> 배당금을 재투자해도 배당소득세(미국 원천징수세 15%)는
+          발생합니다. 세금은 배당금을 받는 시점에 부과되므로, 재투자 후 실제 매수 금액은 세후 금액입니다.
+        </li>
+        <li>
+          <strong>배당 삭감 위험:</strong> 기업 실적이 악화되면 배당을 삭감하거나 중단할 수 있습니다.
+          배당 성향(Payout Ratio)이 너무 높은 기업(80% 이상)은 위험할 수 있습니다.
+        </li>
+        <li>
+          <strong>주가 하락 리스크:</strong> 배당금을 많이 받아도 주가가 크게 하락하면 총 자산이 줄어들 수 있습니다.
+          배당률과 주가 상승(자본이득)을 모두 고려해야 합니다.
+        </li>
+        <li>
+          <strong>기회비용:</strong> 배당금을 재투자하는 대신 다른 투자처(성장주, 부동산 등)에 투자하는 것이
+          더 유리할 수도 있습니다. 상황에 따라 전략을 조정하세요.
+        </li>
+      </ul>
+    </div>
+
+    <!-- FAQ -->
+    <div class="mt-12 mb-8">
+      <h2 class="text-2xl font-bold mb-6">자주 묻는 질문</h2>
+      <div class="space-y-3">
+        {faqItems.map((item) => (
+          <details class="group bg-gray-50 rounded-xl border border-gray-200">
+            <summary class="flex justify-between items-center cursor-pointer p-4 font-semibold text-gray-900 list-none">
+              <span>{item.question}</span>
+              <svg class="w-5 h-5 text-gray-500 transition-transform group-open:rotate-180 flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-4 pb-4 text-gray-700 leading-relaxed">
+              {item.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  interface YearData {
+    year: number;
+    totalContributed: number;
+    currentYield: number;
+    dividendIncome: number;
+    totalDividends: number;
+    endBalance: number;
+  }
+
+  function formatUsd(num: number): string {
+    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatKrw(num: number): string {
+    return Math.round(num).toLocaleString('ko-KR') + '원';
+  }
+
+  function calculate() {
+    const initialInvestment = parseFloat((document.getElementById('initialInvestment') as HTMLInputElement).value) || 0;
+    const monthlyContribution = parseFloat((document.getElementById('monthlyContribution') as HTMLInputElement).value) || 0;
+    const dividendYield = parseFloat((document.getElementById('dividendYield') as HTMLInputElement).value) || 0;
+    const dividendGrowth = parseFloat((document.getElementById('dividendGrowth') as HTMLInputElement).value) || 0;
+    const priceGrowth = parseFloat((document.getElementById('priceGrowth') as HTMLInputElement).value) || 0;
+    const years = parseInt((document.getElementById('years') as HTMLInputElement).value) || 0;
+    const exchangeRate = parseFloat((document.getElementById('exchangeRate') as HTMLInputElement).value) || 1450;
+
+    if (initialInvestment <= 0 || dividendYield <= 0 || years <= 0) {
+      return;
+    }
+
+    const yearlyData: YearData[] = [];
+    let balance = initialInvestment;
+    let totalContributed = initialInvestment;
+    let totalDividends = 0;
+
+    for (let year = 1; year <= years; year++) {
+      const yearlyContribution = monthlyContribution * 12;
+      const currentYield = (dividendYield / 100) * Math.pow(1 + dividendGrowth / 100, year - 1);
+
+      // 연초 잔고에 대한 배당금
+      const dividendIncome = balance * currentYield;
+
+      // 연간 추가 투자금
+      totalContributed += yearlyContribution;
+
+      // 배당금 재투자
+      balance += dividendIncome;
+
+      // 연간 추가 투자 반영
+      balance += yearlyContribution;
+
+      // 주가 상승 효과
+      balance *= (1 + priceGrowth / 100);
+
+      totalDividends += dividendIncome;
+
+      yearlyData.push({
+        year,
+        totalContributed,
+        currentYield: currentYield * 100,
+        dividendIncome,
+        totalDividends,
+        endBalance: balance
+      });
+    }
+
+    const finalValue = balance;
+    const totalProfit = finalValue - totalContributed;
+    const totalReturn = (totalProfit / totalContributed) * 100;
+
+    // 결과 표시
+    const resultEl = document.getElementById('result');
+    if (resultEl) resultEl.classList.remove('hidden');
+
+    const setTextContent = (id: string, text: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    // 투자 결과 요약
+    setTextContent('finalValue', formatUsd(finalValue));
+    setTextContent('finalValueKrw', formatKrw(finalValue * exchangeRate));
+    setTextContent('totalContributed', formatUsd(totalContributed));
+    setTextContent('totalContributedKrw', formatKrw(totalContributed * exchangeRate));
+    setTextContent('totalDividends', formatUsd(totalDividends));
+    setTextContent('totalDividendsKrw', formatKrw(totalDividends * exchangeRate));
+    setTextContent('totalProfit', formatUsd(totalProfit));
+    setTextContent('totalProfitKrw', formatKrw(totalProfit * exchangeRate));
+    setTextContent('totalReturn', totalReturn.toFixed(2) + '%');
+
+    // 연도별 테이블 생성
+    const tableBody = document.getElementById('yearlyTable');
+    if (tableBody) {
+      tableBody.innerHTML = yearlyData.map(data => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3 text-left text-gray-900 font-medium">${data.year}년차</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatUsd(data.totalContributed)}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${data.currentYield.toFixed(2)}%</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatUsd(data.dividendIncome)}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatUsd(data.totalDividends)}</td>
+          <td class="px-4 py-3 text-right text-gray-900 font-semibold">${formatUsd(data.endBalance)}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  document.getElementById('calcBtn')?.addEventListener('click', calculate);
+
+  // Enter 키로도 계산
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('keypress', (e: Event) => {
+      if ((e as KeyboardEvent).key === 'Enter') calculate();
+    });
+  });
+</script>
