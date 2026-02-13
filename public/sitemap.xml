@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.stocktipguide.xyz</loc>
-    <lastmod>2026-02-12T09:50:50.199Z</lastmod>
+    <lastmod>2026-02-13T05:24:04.150Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -51,6 +51,12 @@
   <url>
     <loc>https://www.stocktipguide.xyz/%EA%B3%A0%EA%B0%80-%EC%A0%80%EA%B0%80-%EB%9C%BB-%EC%B0%A8%EC%9D%B4%EC%A0%90</loc>
     <lastmod>2026-01-14T03:30:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.stocktipguide.xyz/%EB%8C%80%ED%98%95%EC%A3%BC-%EC%A4%91%EC%86%8C%ED%98%95%EC%A3%BC-%EB%9C%BB-%EC%B0%A8%EC%9D%B4%EC%A0%90</loc>
+    <lastmod>2026-02-13T03:30:00.000Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
