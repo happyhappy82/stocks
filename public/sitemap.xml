@@ -2,13 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.stocktipguide.xyz</loc>
-    <lastmod>2026-02-17T09:49:06.468Z</lastmod>
+    <lastmod>2026-02-18T05:25:55.565Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.stocktipguide.xyz/eps-bps-%EB%9C%BB-%EC%B0%A8%EC%9D%B4%EC%A0%90</loc>
     <lastmod>2026-02-05T03:30:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.stocktipguide.xyz/etf-etn-%EB%9C%BB-%EC%B0%A8%EC%9D%B4%EC%A0%90</loc>
+    <lastmod>2026-02-18T03:30:00.000Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
