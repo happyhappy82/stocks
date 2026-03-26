@@ -85,16 +85,20 @@ function findExistingFileByPageId(pageId) {
 
   for (const file of files) {
     const filePath = path.join(STOCKS_DIR, file);
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const { data } = matter(fileContent);
+    try {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const { data } = matter(fileContent);
 
-    if (data.notionPageId === pageId) {
-      return {
-        exists: true,
-        filePath: filePath,
-        fileName: file,
-        slug: file.replace('.md', '')
-      };
+      if (data.notionPageId === pageId) {
+        return {
+          exists: true,
+          filePath: filePath,
+          fileName: file,
+          slug: file.replace('.md', '')
+        };
+      }
+    } catch (err) {
+      console.warn(`  ⚠️ Failed to parse ${file}, skipping: ${err.message}`);
     }
   }
 
@@ -165,12 +169,15 @@ async function processPage(pageId, isNew = false) {
   // excerpt가 없으면 autoExcerpt 사용
   const finalExcerpt = props.excerpt || autoExcerpt;
 
+  // YAML frontmatter 값에서 큰따옴표 이스케이프
+  const escYaml = (str) => str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
   const frontmatter = `---
-title: "${props.title}"
+title: "${escYaml(props.title)}"
 date: "${props.date}"
-excerpt: "${finalExcerpt}"
-lightColor: "${props.lightColor}"
-darkColor: "${props.darkColor}"
+excerpt: "${escYaml(finalExcerpt)}"
+lightColor: "${escYaml(props.lightColor)}"
+darkColor: "${escYaml(props.darkColor)}"
 notionPageId: "${props.pageId}"
 ---
 
